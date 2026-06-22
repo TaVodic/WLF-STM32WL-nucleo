@@ -1,31 +1,35 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file    app_subghz_phy.c
-  * @author  MCD Application Team
-  * @brief   Application of the SubGHz_Phy Middleware
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    app_subghz_phy.c
+ * @author  MCD Application Team
+ * @brief   Application of the SubGHz_Phy Middleware
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2026 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_subghz_phy.h"
+#include "main.h"
+#include "stm32wlxx_hal_gpio.h"
 #include "subghz_phy_app.h"
 #include "sys_app.h"
 
 /* USER CODE BEGIN Includes */
 #include "stm32wlxx_hal.h"
 #include "utilities_conf.h"
+#include <stdint.h>
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -79,6 +83,16 @@ void MX_SubGHz_Phy_Init(void)
 void MX_SubGHz_Phy_Process(void)
 {
   /* USER CODE BEGIN MX_SubGHz_Phy_Process_1 */
+
+#if ((TRANSMITTER == 1) && (RECEIVER == 0))  
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+  Transmitt();
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+  HAL_Delay(1000);
+#elif ((TRANSMITTER == 0) && (RECEIVER == 1))
+#elif ((TRANSMITTER == 1) && (RECEIVER == 1))
+#error "Invalid TRANSMITTER/RECEIVER configuration!"
+#endif
 
   /* USER CODE END MX_SubGHz_Phy_Process_1 */
   /* USER CODE BEGIN MX_SubGHz_Phy_Process_OS */

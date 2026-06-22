@@ -7,7 +7,23 @@
         {
             "type": "stlinkgdbtarget",
             "request": "launch",
-            "name": "STM32Cube: Launch ST-Link GDB Server",
+            "name": "WL-A STM32Cube: Launch ST-Link GDB Server",
+            "serverSerialNumber": "004100293756501520303658",
+            "origin": "snippet",
+            "cwd": "${workspaceFolder}",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "runEntry": "main",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+                }
+            ]
+        },
+                {
+            "type": "stlinkgdbtarget",
+            "request": "launch",
+            "name": "WL-B STM32Cube: Launch ST-Link GDB Server",
+            "serverSerialNumber": "003B00205553500920393256",
             "origin": "snippet",
             "cwd": "${workspaceFolder}",
             "preBuild": "${command:st-stm32-ide-debug-launch.build}",

@@ -22,9 +22,13 @@
 #include "subghz_phy_app.h"
 #include "platform.h"
 #include "radio.h"
+#include "stm32wlxx_hal_gpio.h"
 #include "sys_app.h"
 
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -42,6 +46,10 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define MAX_APP_BUFFER_SIZE 255
+#define RX_TIMEOUT_VALUE    3000
+#define TX_TIMEOUT_VALUE    3000
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -54,6 +62,12 @@
 static RadioEvents_t RadioEvents;
 
 /* USER CODE BEGIN PV */
+/* App Rx Buffer*/
+static uint8_t BufferRx[MAX_APP_BUFFER_SIZE];
+/* App Tx Buffer*/
+static uint8_t BufferTx[MAX_APP_BUFFER_SIZE];
+/* Last  Received Buffer Size*/
+uint16_t RxBufferSize = 0;
 
 /* USER CODE END PV */
 
@@ -90,11 +104,14 @@ static void OnRxError(void);
 
 /* USER CODE BEGIN PFP */
 
+void Transmitt(void);
+
 /* USER CODE END PFP */
 
 /* Exported functions
  * ---------------------------------------------------------*/
-void SubghzApp_Init(void) {
+void SubghzApp_Init(void)
+{
   /* USER CODE BEGIN SubghzApp_Init_1 */
 
   /* USER CODE END SubghzApp_Init_1 */
@@ -109,6 +126,40 @@ void SubghzApp_Init(void) {
   Radio.Init(&RadioEvents);
 
   /* USER CODE BEGIN SubghzApp_Init_2 */
+  Radio.SetChannel(RF_FREQUENCY);
+
+  printf("---------------\n\r");
+  printf("STM32WL SUBGHZ DEVEL\n");
+  printf("FSK_MODULATION\n\r");
+  printf("FSK_F=%d Hz\n\r", RF_FREQUENCY);
+  printf("FSK_DR=%d bits/s\n\r", FSK_DATARATE);
+
+#if ((TRANSMITTER == 1) && (RECEIVER == 0))
+  printf("DEVICE: TRANSMITTER\n\n");
+  Radio.SetTxConfig(MODEM_FSK, TX_OUTPUT_POWER, FSK_FDEV, 0, FSK_DATARATE, 0,
+                    FSK_PREAMBLE_LENGTH, FSK_FIX_LENGTH_PAYLOAD_ON, true, 0, 0,
+                    0, TX_TIMEOUT_VALUE);
+  Radio.SetMaxPayloadLength(MODEM_FSK, MAX_APP_BUFFER_SIZE);
+  memset(BufferTx, 0x0, MAX_APP_BUFFER_SIZE);
+
+  strcpy((char *)BufferTx, (const char *)"HELLO WORLD!\r\n");
+#elif ((TRANSMITTER == 0) && (RECEIVER == 1))
+  printf("DEVICE: RECEIVER\n\n");
+  Radio.SetRxConfig(MODEM_FSK, FSK_BANDWIDTH, FSK_DATARATE, 0,
+                    FSK_AFC_BANDWIDTH, FSK_PREAMBLE_LENGTH, 0,
+                    FSK_FIX_LENGTH_PAYLOAD_ON, 0, true, 0, 0, false, true);
+  if (FSK_FIX_LENGTH_PAYLOAD_ON == true)
+  {
+    Radio.SetMaxPayloadLength(MODEM_FSK, PAYLOAD_LEN);
+  }
+  else
+  {
+    Radio.SetMaxPayloadLength(MODEM_FSK, MAX_APP_BUFFER_SIZE);
+  }
+  Radio.Rx(0);
+#elif ((TRANSMITTER == 1) && (RECEIVER == 1))
+#error "Invalid TRANSMITTER/RECEIVER configuration!"
+#endif
 
   /* USER CODE END SubghzApp_Init_2 */
 }
@@ -118,32 +169,63 @@ void SubghzApp_Init(void) {
 /* USER CODE END EF */
 
 /* Private functions ---------------------------------------------------------*/
-static void OnTxDone(void) {
+static void OnTxDone(void)
+{
   /* USER CODE BEGIN OnTxDone */
   /* USER CODE END OnTxDone */
 }
 
 static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi,
-                     int8_t LoraSnr_FskCfo) {
+                     int8_t LoraSnr_FskCfo)
+{
   /* USER CODE BEGIN OnRxDone */
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+  printf("OnRxDone!\r\n");
+  printf("RssiValue=%d dBm, Cfo=%dkHz\n\r", rssi, LoraSnr_FskCfo);
+
+  memset(BufferRx, 0, MAX_APP_BUFFER_SIZE);
+  RxBufferSize = size;
+  if (RxBufferSize <= MAX_APP_BUFFER_SIZE)
+  {
+    memcpy(BufferRx, payload, RxBufferSize);
+  }
+
+  printf("payload. size=%d \n\r", size);
+  for (int32_t i = 0; i < PAYLOAD_LEN; i++)
+  {
+    printf("%02X", BufferRx[i]);
+    if (i % 16 == 15)
+    {
+      printf("\n\r");
+    }
+  }
+  printf("\n\r");
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   /* USER CODE END OnRxDone */
 }
 
-static void OnTxTimeout(void) {
+static void OnTxTimeout(void)
+{
   /* USER CODE BEGIN OnTxTimeout */
   /* USER CODE END OnTxTimeout */
 }
 
-static void OnRxTimeout(void) {
+static void OnRxTimeout(void)
+{
   /* USER CODE BEGIN OnRxTimeout */
   /* USER CODE END OnRxTimeout */
 }
 
-static void OnRxError(void) {
+static void OnRxError(void)
+{
   /* USER CODE BEGIN OnRxError */
   /* USER CODE END OnRxError */
 }
 
 /* USER CODE BEGIN PrFD */
+void Transmitt(void)
+{
+  Radio.Send(BufferTx, PAYLOAD_LEN);
+}
 
 /* USER CODE END PrFD */

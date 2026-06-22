@@ -39,6 +39,19 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 
 /* USER CODE BEGIN EC */
+#define TRANSMITTER 0
+#define RECEIVER    1
+
+#define PAYLOAD_LEN 64
+
+#define RF_FREQUENCY              869500000 /* Hz */
+#define FSK_FDEV                  25000     /* Hz */
+#define FSK_DATARATE              50000     /* bps */
+#define FSK_BANDWIDTH             50000     /* Hz */
+#define FSK_PREAMBLE_LENGTH       5         /* Same for Tx and Rx */
+#define FSK_FIX_LENGTH_PAYLOAD_ON false
+#define TX_OUTPUT_POWER           10 /* dBm */
+#define FSK_AFC_BANDWIDTH         83333
 
 /* USER CODE END EC */
 
@@ -59,6 +72,7 @@ extern "C" {
 void SubghzApp_Init(void);
 
 /* USER CODE BEGIN EFP */
+void Transmitt(void);
 
 /* USER CODE END EFP */
 
