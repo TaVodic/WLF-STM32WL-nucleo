@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file    sys_app.c
-  * @author  MCD Application Team
-  * @brief   Initializes HW and SW system entities (not related to the radio)
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    sys_app.c
+ * @author  MCD Application Team
+ * @brief   Initializes HW and SW system entities (not related to the radio)
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2026 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -27,6 +27,7 @@
 #include "utilities_def.h"
 
 /* USER CODE BEGIN Includes */
+#include "stm32_lpm.h"
 
 /* USER CODE END Includes */
 
@@ -60,6 +61,18 @@ static uint8_t SYS_TimerInitialisedFlag = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
 
+/**
+  * @brief Returns sec and msec based on the systime in use
+  * @param buff to update with timestamp
+  * @param size of updated buffer
+  */
+static void TimestampNow(uint8_t *buff, uint16_t *size);
+
+/**
+  * @brief  it calls UTIL_ADV_TRACE_VSNPRINTF
+  */
+static void tiny_snprintf_like(char *buf, uint32_t maxsize, const char *strFormat, ...);
+
 /* USER CODE END PFP */
 
 /* Exported functions ---------------------------------------------------------*/
@@ -78,13 +91,59 @@ void SystemApp_Init(void)
 /* Private functions ---------------------------------------------------------*/
 /* USER CODE BEGIN PrFD */
 
+static void TimestampNow(uint8_t *buff, uint16_t *size) {
+  /* USER CODE BEGIN TimestampNow_1 */
+
+  /* USER CODE END TimestampNow_1 */
+  SysTime_t curtime = SysTimeGet();
+  tiny_snprintf_like((char *)buff, UTIL_ADV_TRACE_TMP_MAX_TIMESTMAP_SIZE, "%ds%03d:", curtime.Seconds,
+                     curtime.SubSeconds);
+  *size = strlen((char *)buff);
+  /* USER CODE BEGIN TimestampNow_2 */
+
+  /* USER CODE END TimestampNow_2 */
+}
+
+/* Disable StopMode when traces need to be printed */
+void UTIL_ADV_TRACE_PreSendHook(void) {
+  /* USER CODE BEGIN UTIL_ADV_TRACE_PreSendHook_1 */
+
+  /* USER CODE END UTIL_ADV_TRACE_PreSendHook_1 */
+  UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_TX_Id), UTIL_LPM_DISABLE);
+  /* USER CODE BEGIN UTIL_ADV_TRACE_PreSendHook_2 */
+
+  /* USER CODE END UTIL_ADV_TRACE_PreSendHook_2 */
+}
+/* Re-enable StopMode when traces have been printed */
+void UTIL_ADV_TRACE_PostSendHook(void) {
+  /* USER CODE BEGIN UTIL_LPM_SetStopMode_1 */
+
+  /* USER CODE END UTIL_LPM_SetStopMode_1 */
+  UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_TX_Id), UTIL_LPM_ENABLE);
+  /* USER CODE BEGIN UTIL_LPM_SetStopMode_2 */
+
+  /* USER CODE END UTIL_LPM_SetStopMode_2 */
+}
+
+static void tiny_snprintf_like(char *buf, uint32_t maxsize,
+                               const char *strFormat, ...) {
+  /* USER CODE BEGIN tiny_snprintf_like_1 */
+
+  /* USER CODE END tiny_snprintf_like_1 */
+  va_list vaArgs;
+  va_start(vaArgs, strFormat);
+  UTIL_ADV_TRACE_VSNPRINTF(buf, maxsize, strFormat, vaArgs);
+  va_end(vaArgs);
+  /* USER CODE BEGIN tiny_snprintf_like_2 */
+}
+
 /* USER CODE END PrFD */
 
 /* HAL overload functions ---------------------------------------------------------*/
 
 /* Set #if 0 if you want to keep the default HAL instead overcharge them*/
 /* USER CODE BEGIN Overload_HAL_weaks_1 */
-#if 1
+#if 0
 /* USER CODE END Overload_HAL_weaks_1 */
 
 /* USER CODE BEGIN Overload_HAL_weaks_1a */

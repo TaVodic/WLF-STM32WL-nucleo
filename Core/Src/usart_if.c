@@ -89,6 +89,7 @@ static void (*RxCpltCallback)(uint8_t *rxChar, uint16_t size, uint8_t error);
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
+void MX_DMA_Init(void);
 
 /* USER CODE END PFP */
 

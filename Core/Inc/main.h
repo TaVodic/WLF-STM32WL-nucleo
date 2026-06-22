@@ -59,6 +59,13 @@ void MX_USART2_UART_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define RTC_PREDIV_A ((1<<(15-RTC_N_PREDIV_S))-1)
+#define RTC_N_PREDIV_S 10
+#define RTC_PREDIV_S ((1<<RTC_N_PREDIV_S)-1)
+#define USARTx_RX_Pin GPIO_PIN_3
+#define USARTx_RX_GPIO_Port GPIOA
+#define USARTx_TX_Pin GPIO_PIN_2
+#define USARTx_TX_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

@@ -24,6 +24,8 @@
 #include "sys_app.h"
 
 /* USER CODE BEGIN Includes */
+#include "stm32wlxx_hal.h"
+#include "utilities_conf.h"
 
 /* USER CODE END Includes */
 
