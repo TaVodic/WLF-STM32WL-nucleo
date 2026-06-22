@@ -134,7 +134,7 @@ void SubghzApp_Init(void)
   printf("FSK_F=%d Hz\n\r", RF_FREQUENCY);
   printf("FSK_DR=%d bits/s\n\r", FSK_DATARATE);
 
-#if ((TRANSMITTER == 1) && (RECEIVER == 0))
+#if (NODE == TRANSMITTER)
   printf("DEVICE: TRANSMITTER\n\n");
   Radio.SetTxConfig(MODEM_FSK, TX_OUTPUT_POWER, FSK_FDEV, 0, FSK_DATARATE, 0,
                     FSK_PREAMBLE_LENGTH, FSK_FIX_LENGTH_PAYLOAD_ON, true, 0, 0,
@@ -143,7 +143,7 @@ void SubghzApp_Init(void)
   memset(BufferTx, 0x0, MAX_APP_BUFFER_SIZE);
 
   strcpy((char *)BufferTx, (const char *)"HELLO WORLD!\r\n");
-#elif ((TRANSMITTER == 0) && (RECEIVER == 1))
+#elif (NODE == RECEIVER)
   printf("DEVICE: RECEIVER\n\n");
   Radio.SetRxConfig(MODEM_FSK, FSK_BANDWIDTH, FSK_DATARATE, 0,
                     FSK_AFC_BANDWIDTH, FSK_PREAMBLE_LENGTH, 0,
@@ -157,8 +157,8 @@ void SubghzApp_Init(void)
     Radio.SetMaxPayloadLength(MODEM_FSK, MAX_APP_BUFFER_SIZE);
   }
   Radio.Rx(0);
-#elif ((TRANSMITTER == 1) && (RECEIVER == 1))
-#error "Invalid TRANSMITTER/RECEIVER configuration!"
+#else
+#error "Invalid NODE configuration!"
 #endif
 
   /* USER CODE END SubghzApp_Init_2 */
@@ -193,7 +193,7 @@ static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi,
   printf("payload. size=%d \n\r", size);
   for (int32_t i = 0; i < PAYLOAD_LEN; i++)
   {
-    printf("%02X", BufferRx[i]);
+    printf("%c", BufferRx[i]);
     if (i % 16 == 15)
     {
       printf("\n\r");

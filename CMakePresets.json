@@ -11,10 +11,20 @@
             }
         },
         {
-            "name": "Debug",
+            "name": "Debug_TRANSMITTER",
             "inherits": "default",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "NODE": "1"
+            }
+            
+        },
+        {
+            "name": "Debug_RECEIVER",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "NODE": "2"
             }
         },
         {
@@ -27,8 +37,12 @@
     ],
     "buildPresets": [
         {
-            "name": "Debug",
-            "configurePreset": "Debug"
+            "name": "Debug_TRANSMITTER",
+            "configurePreset": "Debug_TRANSMITTER"
+        },
+        {
+            "name": "Debug_RECEIVER",
+            "configurePreset": "Debug_RECEIVER"
         },
         {
             "name": "Release",

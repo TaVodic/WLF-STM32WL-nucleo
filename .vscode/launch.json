@@ -11,26 +11,26 @@
             "serverSerialNumber": "004100293756501520303658",
             "origin": "snippet",
             "cwd": "${workspaceFolder}",
-            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "preLaunchTask": "Build Debug_TRANSMITTER",
             "runEntry": "main",
             "imagesAndSymbols": [
                 {
-                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+                    "imageFileName": "${workspaceFolder}/build/Debug_TRANSMITTER/nucleo_singleCore_subghz.elf"
                 }
             ]
         },
-                {
+        {
             "type": "stlinkgdbtarget",
             "request": "launch",
             "name": "WL-B STM32Cube: Launch ST-Link GDB Server",
             "serverSerialNumber": "003B00205553500920393256",
             "origin": "snippet",
             "cwd": "${workspaceFolder}",
-            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "preLaunchTask": "Build Debug_RECEIVER",
             "runEntry": "main",
             "imagesAndSymbols": [
                 {
-                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+                    "imageFileName": "${workspaceFolder}/build/Debug_RECEIVER/nucleo_singleCore_subghz.elf"
                 }
             ]
         }

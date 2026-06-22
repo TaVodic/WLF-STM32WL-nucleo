@@ -39,8 +39,11 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 
 /* USER CODE BEGIN EC */
-#define TRANSMITTER 0
-#define RECEIVER    1
+#define TRANSMITTER 1
+#define RECEIVER    2
+/*
+#define NODE TRANSMITTER // node is defined by CMake
+*/ 
 
 #define PAYLOAD_LEN 64
 

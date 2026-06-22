@@ -73,3 +73,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
     # Add user defined libraries
 )
+
+set(NODE 0 CACHE STRING "Node type")
+add_compile_definitions(NODE=${NODE})

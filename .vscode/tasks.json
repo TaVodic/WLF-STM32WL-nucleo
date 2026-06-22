@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Configure Debug_TRANSMITTER",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["--preset", "Debug_TRANSMITTER"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Debug_TRANSMITTER",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["--build", "--preset", "Debug_TRANSMITTER"],
+      "dependsOn": "Configure Debug_TRANSMITTER",
+      "problemMatcher": []
+    },
+    {
+      "label": "Configure Debug_RECEIVER",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["--preset", "Debug_RECEIVER"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Debug_RECEIVER",
+      "type": "shell",
+      "command": "cmake",
+      "args": ["--build", "--preset", "Debug_RECEIVER"],
+      "dependsOn": "Configure Debug_RECEIVER",
+      "problemMatcher": []
+    }
+  ]
+}

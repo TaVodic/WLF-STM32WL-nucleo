@@ -84,14 +84,14 @@ void MX_SubGHz_Phy_Process(void)
 {
   /* USER CODE BEGIN MX_SubGHz_Phy_Process_1 */
 
-#if ((TRANSMITTER == 1) && (RECEIVER == 0))  
+#if (NODE == TRANSMITTER)
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
   Transmitt();
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   HAL_Delay(1000);
-#elif ((TRANSMITTER == 0) && (RECEIVER == 1))
-#elif ((TRANSMITTER == 1) && (RECEIVER == 1))
-#error "Invalid TRANSMITTER/RECEIVER configuration!"
+#elif (NODE == RECEIVER)
+#else
+#error "Invalid NODE configuration!"
 #endif
 
   /* USER CODE END MX_SubGHz_Phy_Process_1 */
