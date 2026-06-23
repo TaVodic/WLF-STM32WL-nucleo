@@ -101,9 +101,11 @@ extern SUBGHZ_HandleTypeDef hsubghz;
   * @brief disable the radio generic features
   * @note enabled by default
   */
-#define RADIO_GENERIC_CONFIG_ENABLE 1
+#define RADIO_GENERIC_CONFIG_ENABLE 0
 
 /* USER CODE BEGIN EC */
+#undef RADIO_GENERIC_CONFIG_ENABLE
+#define RADIO_GENERIC_CONFIG_ENABLE 1
 /* USER CODE END EC */
 
 /* External variables --------------------------------------------------------*/
@@ -147,8 +149,12 @@ extern SUBGHZ_HandleTypeDef hsubghz;
 #define RADIO_MEMCPY8( dest, src, size )        UTIL_MEM_cpy_8( dest, src, size )
 
 /* USER CODE BEGIN EM */
+#ifndef RST
+#define RST RESET
+#endif
+
 #define DBG_GPIO_RADIO_TX(set_rst) \
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, ((set_rst) == SET) ? GPIO_PIN_SET : GPIO_PIN_RESET)
+  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, ((set_rst) == SET) ? GPIO_PIN_SET : GPIO_PIN_RESET)
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

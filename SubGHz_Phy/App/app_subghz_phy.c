@@ -20,8 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_subghz_phy.h"
-#include "main.h"
-#include "stm32wlxx_hal_gpio.h"
 #include "subghz_phy_app.h"
 #include "sys_app.h"
 
@@ -30,6 +28,7 @@
 #include "utilities_conf.h"
 #include <stdint.h>
 #include <stdio.h>
+#include "main.h"
 
 /* USER CODE END Includes */
 
@@ -86,8 +85,8 @@ void MX_SubGHz_Phy_Process(void)
 
 #if (NODE == TRANSMITTER)
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-  printf("Sending: HELLO WORLD!\r\n");
-  Transmitt((const char *)"HELLO WORLD!\r\n");  
+  printf("Sending: HELLO WORLD!\r\n\r\n");
+  Transmitt((const char *)("HELLO WORLD!\r\n"));  
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   HAL_Delay(1000);
 #elif (NODE == RECEIVER)

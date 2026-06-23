@@ -23,8 +23,7 @@
 #define __SUBGHZ_PHY_APP_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -62,31 +61,28 @@ extern "C"
   RADIO_FSK_MOD_SHAPING_G_BT_1; // could be experimented with
 #define FSK_LENGTH_MODE RADIO_FSK_PACKET_FIXED_LENGTH
 
-  /* USER CODE END EC */
+/* USER CODE END EC */
 
-  /* External variables
-   * --------------------------------------------------------*/
-  /* USER CODE BEGIN EV */
+/* External variables --------------------------------------------------------*/
+/* USER CODE BEGIN EV */
 
-  /* USER CODE END EV */
+/* USER CODE END EV */
 
-  /* Exported macros
-   * -----------------------------------------------------------*/
-  /* USER CODE BEGIN EM */
+/* Exported macros -----------------------------------------------------------*/
+/* USER CODE BEGIN EM */
 
-  /* USER CODE END EM */
+/* USER CODE END EM */
 
-  /* Exported functions prototypes
-   * ---------------------------------------------*/
-  /**
-   * @brief  Init Subghz Application
-   */
-  void SubghzApp_Init(void);
+/* Exported functions prototypes ---------------------------------------------*/
+/**
+  * @brief  Init Subghz Application
+  */
+void SubghzApp_Init(void);
 
-  /* USER CODE BEGIN EFP */
+/* USER CODE BEGIN EFP */
   void Transmitt(const char* payload);
 
-  /* USER CODE END EFP */
+/* USER CODE END EFP */
 
 #ifdef __cplusplus
 }

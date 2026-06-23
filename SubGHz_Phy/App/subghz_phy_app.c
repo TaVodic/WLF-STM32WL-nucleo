@@ -19,23 +19,20 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "subghz_phy_app.h"
 #include "platform.h"
-#include "radio.h"
-#include "radio_driver.h"
-#include "radio_ex.h"
-#include "stm32wlxx_hal_gpio.h"
 #include "sys_app.h"
+#include "subghz_phy_app.h"
+#include "radio.h"
 
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "radio_driver.h"
 
 /* USER CODE END Includes */
 
-/* External variables
- * ---------------------------------------------------------*/
+/* External variables ---------------------------------------------------------*/
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -80,28 +77,27 @@ uint16_t RxBufferSize = 0;
 static void OnTxDone(void);
 
 /**
- * @brief Function to be executed on Radio Rx Done event
- * @param  payload ptr of buffer received
- * @param  size buffer size
- * @param  rssi
- * @param  LoraSnr_FskCfo
- */
-static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi,
-                     int8_t LoraSnr_FskCfo);
+  * @brief Function to be executed on Radio Rx Done event
+  * @param  payload ptr of buffer received
+  * @param  size buffer size
+  * @param  rssi
+  * @param  LoraSnr_FskCfo
+  */
+static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraSnr_FskCfo);
 
 /**
- * @brief Function executed on Radio Tx Timeout event
- */
+  * @brief Function executed on Radio Tx Timeout event
+  */
 static void OnTxTimeout(void);
 
 /**
- * @brief Function executed on Radio Rx Timeout event
- */
+  * @brief Function executed on Radio Rx Timeout event
+  */
 static void OnRxTimeout(void);
 
 /**
- * @brief Function executed on Radio Rx Error event
- */
+  * @brief Function executed on Radio Rx Error event
+  */
 static void OnRxError(void);
 
 /* USER CODE BEGIN PFP */
@@ -110,8 +106,7 @@ void Transmitt(const char* payload);
 
 /* USER CODE END PFP */
 
-/* Exported functions
- * ---------------------------------------------------------*/
+/* Exported functions ---------------------------------------------------------*/
 void SubghzApp_Init(void)
 {
   /* USER CODE BEGIN SubghzApp_Init_1 */
@@ -217,8 +212,7 @@ static void OnTxDone(void)
   /* USER CODE END OnTxDone */
 }
 
-static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi,
-                     int8_t LoraSnr_FskCfo)
+static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraSnr_FskCfo)
 {
   /* USER CODE BEGIN OnRxDone */
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
