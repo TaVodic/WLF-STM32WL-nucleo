@@ -39,6 +39,7 @@
 #include "radio_driver.h"
 #include "radio_conf.h"
 #include "mw_log_conf.h"
+#include "stdio.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /*!

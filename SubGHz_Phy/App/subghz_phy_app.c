@@ -22,6 +22,8 @@
 #include "subghz_phy_app.h"
 #include "platform.h"
 #include "radio.h"
+#include "radio_driver.h"
+#include "radio_ex.h"
 #include "stm32wlxx_hal_gpio.h"
 #include "sys_app.h"
 
@@ -104,7 +106,7 @@ static void OnRxError(void);
 
 /* USER CODE BEGIN PFP */
 
-void Transmitt(void);
+void Transmitt(const char* payload);
 
 /* USER CODE END PFP */
 
@@ -140,22 +142,62 @@ void SubghzApp_Init(void)
                     FSK_PREAMBLE_LENGTH, FSK_FIX_LENGTH_PAYLOAD_ON, true, 0, 0,
                     0, TX_TIMEOUT_VALUE);
   Radio.SetMaxPayloadLength(MODEM_FSK, MAX_APP_BUFFER_SIZE);
+
+  TxConfigGeneric_t txConf;
+  txConf.fsk.BitRate = FSK_DATARATE;
+  txConf.fsk.FrequencyDeviation = FSK_FDEV;
+  txConf.fsk.ModulationShaping =
+      FSK_MODULATION_SHAPING; // could be experimented with
+
+  txConf.fsk.HeaderType = FSK_LENGTH_MODE;
+  txConf.fsk.PreambleLen = FSK_PREAMBLE_LENGTH;
+  txConf.fsk.SyncWordLength = 3;
+  txConf.fsk.SyncWord = ( uint8_t[] ){ 0xC1, 0x94, 0xC1, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+  txConf.fsk.CrcLength = RADIO_FSK_CRC_2_BYTES_CCIT;
+  txConf.fsk.CrcPolynomial = CRC_POLYNOMIAL_CCITT;
+  txConf.fsk.CrcSeed = CRC_CCITT_SEED;
+
+  txConf.fsk.whiteSeed = 0x01FF;
+  txConf.fsk.Whitening = RADIO_FSK_DC_FREEWHITENING; // CCITT
+
+  Radio.RadioSetTxGenericConfig(GENERIC_FSK, &txConf, TX_OUTPUT_POWER, 0);
+
   memset(BufferTx, 0x0, MAX_APP_BUFFER_SIZE);
 
-  strcpy((char *)BufferTx, (const char *)"HELLO WORLD!\r\n");
 #elif (NODE == RECEIVER)
   printf("DEVICE: RECEIVER\n\n");
-  Radio.SetRxConfig(MODEM_FSK, FSK_BANDWIDTH, FSK_DATARATE, 0,
+  /*Radio.SetRxConfig(MODEM_FSK, FSK_BANDWIDTH, FSK_DATARATE, 0,
                     FSK_AFC_BANDWIDTH, FSK_PREAMBLE_LENGTH, 0,
-                    FSK_FIX_LENGTH_PAYLOAD_ON, 0, true, 0, 0, false, true);
-  if (FSK_FIX_LENGTH_PAYLOAD_ON == true)
-  {
-    Radio.SetMaxPayloadLength(MODEM_FSK, PAYLOAD_LEN);
-  }
-  else
-  {
-    Radio.SetMaxPayloadLength(MODEM_FSK, MAX_APP_BUFFER_SIZE);
-  }
+                    FSK_FIX_LENGTH_PAYLOAD_ON, PAYLOAD_LEN, true, 0, 0, false,
+                    RX_CONTINUOUS_MODE);
+  Radio.SetMaxPayloadLength(MODEM_FSK, PAYLOAD_LEN);*/
+
+  RxConfigGeneric_t rxConfig;
+  rxConfig.fsk.Bandwidth = FSK_BANDWIDTH;
+  rxConfig.fsk.BitRate = FSK_DATARATE;
+  rxConfig.fsk.ModulationShaping = FSK_MODULATION_SHAPING;
+
+  rxConfig.fsk.PreambleLen = FSK_PREAMBLE_LENGTH;  
+  rxConfig.fsk.PreambleMinDetect = RADIO_PREAMBLE_DETECTOR_08_BITS;
+  //rxConfig.fsk.StopTimerOnPreambleDetect;
+
+  rxConfig.fsk.SyncWordLength = 3;
+  rxConfig.fsk.SyncWord = ( uint8_t[] ){ 0xC1, 0x94, 0xC1, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+  rxConfig.fsk.AddrComp = 0;
+
+  rxConfig.fsk.LengthMode = FSK_LENGTH_MODE;
+  rxConfig.fsk.MaxPayloadLength = PAYLOAD_LEN;
+
+  rxConfig.fsk.CrcLength = RADIO_FSK_CRC_2_BYTES_CCIT;
+  rxConfig.fsk.CrcPolynomial = CRC_POLYNOMIAL_CCITT;
+
+  rxConfig.fsk.Whitening = RADIO_FSK_DC_FREEWHITENING; // CCITT;
+  rxConfig.fsk.whiteSeed = 0x01FF;;
+
+  Radio.RadioSetRxGenericConfig(GENERIC_FSK, &rxConfig, RX_CONTINUOUS_MODE, 0);
+
   Radio.Rx(0);
 #else
 #error "Invalid NODE configuration!"
@@ -181,7 +223,7 @@ static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi,
   /* USER CODE BEGIN OnRxDone */
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
   printf("OnRxDone!\r\n");
-  printf("RssiValue=%d dBm, Cfo=%dkHz\n\r", rssi, LoraSnr_FskCfo);
+  printf("RssiValue=%d dBm, Cfo=%dkHz,\n\r", rssi, LoraSnr_FskCfo);
 
   memset(BufferRx, 0, MAX_APP_BUFFER_SIZE);
   RxBufferSize = size;
@@ -190,7 +232,16 @@ static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi,
     memcpy(BufferRx, payload, RxBufferSize);
   }
 
-  printf("payload. size=%d \n\r", size);
+  printf("payload size=%d \n\r", size);
+  for (int32_t i = 0; i < PAYLOAD_LEN; i++)
+  {
+    printf("%d ", BufferRx[i]);
+    if (i % 16 == 15)
+    {
+      printf("\n\r");
+    }
+  }
+  printf("\n\r");
   for (int32_t i = 0; i < PAYLOAD_LEN; i++)
   {
     printf("%c", BufferRx[i]);
@@ -223,8 +274,9 @@ static void OnRxError(void)
 }
 
 /* USER CODE BEGIN PrFD */
-void Transmitt(void)
+void Transmitt(const char* payload)
 {
+  strcpy((char *)BufferTx, payload);
   Radio.Send(BufferTx, PAYLOAD_LEN);
 }
 

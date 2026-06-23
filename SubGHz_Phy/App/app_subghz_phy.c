@@ -86,7 +86,8 @@ void MX_SubGHz_Phy_Process(void)
 
 #if (NODE == TRANSMITTER)
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-  Transmitt();
+  printf("Sending: HELLO WORLD!\r\n");
+  Transmitt((const char *)"HELLO WORLD!\r\n");  
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   HAL_Delay(1000);
 #elif (NODE == RECEIVER)

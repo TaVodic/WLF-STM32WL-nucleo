@@ -15,6 +15,7 @@
             "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "DEFINE_NODE": "ON",
                 "NODE": "1"
             }
             
@@ -24,7 +25,16 @@
             "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
+                "DEFINE_NODE": "ON",
                 "NODE": "2"
+            }
+        },
+        {
+            "name": "Devel",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Devel",
+                "DEFINE_NODE": "OFF"
             }
         },
         {
@@ -43,6 +53,10 @@
         {
             "name": "Debug_RECEIVER",
             "configurePreset": "Debug_RECEIVER"
+        },
+        {
+            "name": "Devel",
+            "configurePreset": "Devel"
         },
         {
             "name": "Release",

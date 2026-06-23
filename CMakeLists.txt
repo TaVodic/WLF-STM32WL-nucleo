@@ -74,5 +74,12 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     # Add user defined libraries
 )
 
-set(NODE 0 CACHE STRING "Node type")
-add_compile_definitions(NODE=${NODE})
+set(DEFINE_NODE OFF CACHE BOOL "Define NODE for the build")
+
+if(DEFINE_NODE)
+    if(NOT DEFINED NODE OR "${NODE}" STREQUAL "")
+        message(FATAL_ERROR "DEFINE_NODE is ON but NODE is not set")
+    endif()
+
+    add_compile_definitions(NODE=${NODE})
+endif()
