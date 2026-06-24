@@ -24,11 +24,12 @@
 #include "sys_app.h"
 
 /* USER CODE BEGIN Includes */
+#include "main.h"
 #include "stm32wlxx_hal.h"
 #include "utilities_conf.h"
 #include <stdint.h>
 #include <stdio.h>
-#include "main.h"
+
 
 /* USER CODE END Includes */
 
@@ -84,11 +85,25 @@ void MX_SubGHz_Phy_Process(void)
   /* USER CODE BEGIN MX_SubGHz_Phy_Process_1 */
 
 #if (NODE == TRANSMITTER)
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-  printf("Sending: HELLO WORLD!\r\n\r\n");
-  Transmitt((const char *)("HELLO WORLD!\r\n"));  
+#define FIXTURE_N PAYLOAD_LEN
+  static uint8_t fixtures_val[FIXTURE_N];
+
+  for (uint8_t i = 0; i < sizeof(fixtures_val); i++)
+  {
+    fixtures_val[i] = i;
+  }
+
+  printf("Sending: ");
+  for (uint8_t i = 0; i < sizeof(fixtures_val); i++)
+  {
+    printf("%d", fixtures_val[i]);
+  }
+  printf("\r\n");
+
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);  
+  Transmitt(fixtures_val);
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-  HAL_Delay(1000);
+  HAL_Delay(50);
 #elif (NODE == RECEIVER)
 #else
 #error "Invalid NODE configuration!"

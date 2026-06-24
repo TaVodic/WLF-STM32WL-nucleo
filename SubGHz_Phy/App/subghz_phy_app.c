@@ -67,6 +67,9 @@ static uint8_t BufferRx[MAX_APP_BUFFER_SIZE];
 static uint8_t BufferTx[MAX_APP_BUFFER_SIZE];
 /* Last  Received Buffer Size*/
 uint16_t RxBufferSize = 0;
+uint16_t crc_error_pckt_N = 0;
+int8_t rssi_min = 0;
+uint8_t cfo_max = 0;
 
 /* USER CODE END PV */
 
@@ -102,7 +105,7 @@ static void OnRxError(void);
 
 /* USER CODE BEGIN PFP */
 
-void Transmitt(const char* payload);
+void Transmitt(uint8_t* payload);
 
 /* USER CODE END PFP */
 
@@ -147,7 +150,7 @@ void SubghzApp_Init(void)
   txConf.fsk.HeaderType = FSK_LENGTH_MODE;
   txConf.fsk.PreambleLen = FSK_PREAMBLE_LENGTH;
   txConf.fsk.SyncWordLength = 3;
-  txConf.fsk.SyncWord = ( uint8_t[] ){ 0xC1, 0x94, 0xC1, 0x00, 0x00, 0x00, 0x00, 0x00 };
+  txConf.fsk.SyncWord = ( uint8_t[] ){ 0xC1, 0x94, 0xC1};
 
   txConf.fsk.CrcLength = RADIO_FSK_CRC_2_BYTES_CCIT;
   txConf.fsk.CrcPolynomial = CRC_POLYNOMIAL_CCITT;
@@ -178,7 +181,7 @@ void SubghzApp_Init(void)
   //rxConfig.fsk.StopTimerOnPreambleDetect;
 
   rxConfig.fsk.SyncWordLength = 3;
-  rxConfig.fsk.SyncWord = ( uint8_t[] ){ 0xC1, 0x94, 0xC1, 0x00, 0x00, 0x00, 0x00, 0x00 };
+  rxConfig.fsk.SyncWord = ( uint8_t[] ){ 0xC1, 0x94, 0xC1};
 
   rxConfig.fsk.AddrComp = 0;
 
@@ -235,16 +238,14 @@ static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraS
       printf("\n\r");
     }
   }
-  printf("\n\r");
-  for (int32_t i = 0; i < PAYLOAD_LEN; i++)
-  {
-    printf("%c", BufferRx[i]);
-    if (i % 16 == 15)
-    {
-      printf("\n\r");
-    }
-  }
-  printf("\n\r");
+
+  if (rssi < rssi_min) rssi_min = rssi;
+  if (LoraSnr_FskCfo > cfo_max) cfo_max = LoraSnr_FskCfo;
+
+  printf("CRC error sum:%d\r\n", crc_error_pckt_N);
+  printf("cfo max:%d\r\n", cfo_max);
+  printf("rssi min:%d\r\n", rssi_min);
+
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   /* USER CODE END OnRxDone */
 }
@@ -264,14 +265,14 @@ static void OnRxTimeout(void)
 static void OnRxError(void)
 {
   /* USER CODE BEGIN OnRxError */
+  crc_error_pckt_N++;
   /* USER CODE END OnRxError */
 }
 
 /* USER CODE BEGIN PrFD */
-void Transmitt(const char* payload)
+void Transmitt(uint8_t* payload)
 {
-  strcpy((char *)BufferTx, payload);
-  Radio.Send(BufferTx, PAYLOAD_LEN);
+  Radio.Send(payload, PAYLOAD_LEN);
 }
 
 /* USER CODE END PrFD */

@@ -46,12 +46,12 @@ extern "C" {
 #define NODE TRANSMITTER // node is defined by CMake
 #endif
 
-#define PAYLOAD_LEN 15
+#define PAYLOAD_LEN 16
 
 #define RF_FREQUENCY              869500000 /* Hz */
 #define FSK_FDEV                  25000     /* Hz */
 #define FSK_DATARATE              50000     /* bps */
-#define FSK_BANDWIDTH             50000     /* Hz */
+#define FSK_BANDWIDTH             150000    /* Hz */
 #define FSK_PREAMBLE_LENGTH       5         /* Same for Tx and Rx */
 #define FSK_FIX_LENGTH_PAYLOAD_ON true
 #define TX_OUTPUT_POWER           10 /* dBm */
@@ -80,7 +80,7 @@ extern "C" {
 void SubghzApp_Init(void);
 
 /* USER CODE BEGIN EFP */
-  void Transmitt(const char* payload);
+  void Transmitt(uint8_t* payload);
 
 /* USER CODE END EFP */
 
